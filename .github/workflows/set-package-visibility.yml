@@ -1,0 +1,44 @@
+name: Set Package Visibility
+
+on:
+  workflow_dispatch:
+    inputs:
+      visibility:
+        description: Target visibility for published container packages
+        type: choice
+        required: true
+        default: public
+        options:
+          - public
+          - private
+
+jobs:
+  update-visibility:
+    name: Set GHCR package visibility
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Update package visibility
+        uses: actions/github-script@v7
+        env:
+          TARGET_VISIBILITY: ${{ inputs.visibility }}
+        with:
+          script: |
+            const visibility = process.env.TARGET_VISIBILITY;
+            const org = context.repo.owner;
+            const packageType = 'container';
+            const packageNames = ['ci-node-pnpm-dune', 'backend-builder-base'];
+
+            for (const packageName of packageNames) {
+              core.info(`Setting ${packageName} visibility to ${visibility}`);
+              await github.request('PATCH /orgs/{org}/packages/{package_type}/{package_name}/visibility', {
+                org,
+                package_type: packageType,
+                package_name: packageName,
+                visibility,
+              });
+              core.info(`Updated ${packageName}`);
+            }
