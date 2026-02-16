@@ -17,6 +17,7 @@ Includes:
 - Node.js 20.20.0
 - pnpm 10
 - dune 3.21
+- build toolchain (`make`, `gcc`, musl-dev via `build-base`)
 - common CI tools (`git`, `curl`, `jq`, `unzip`, etc.)
 
 Compatibility note: this image is Alpine-based (`musl`), not Ubuntu/Debian (`glibc`).
@@ -79,7 +80,7 @@ jobs:
   build_frontend:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/makerprism/ci-node-pnpm-dune:1.0.0
+      image: ghcr.io/makerprism/ci-node-pnpm-dune:1.0.1
     steps:
       - uses: actions/checkout@v4
       - run: pnpm --version && dune --version

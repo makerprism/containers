@@ -7,6 +7,7 @@ ARG DUNE_VERSION=3.21.0
 
 RUN apk add --no-cache \
         bash \
+        build-base \
         ca-certificates \
         curl \
         git \
