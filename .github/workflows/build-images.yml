@@ -1,0 +1,90 @@
+name: Build Container Images
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'images/**'
+      - '.github/workflows/build-images.yml'
+      - 'README.md'
+  pull_request:
+    paths:
+      - 'images/**'
+      - '.github/workflows/build-images.yml'
+      - 'README.md'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build ${{ matrix.image_name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image_name: ci-node-pnpm-dune
+            context: images/ci-node-pnpm-dune
+            file: images/ci-node-pnpm-dune/Dockerfile
+            version_file: images/ci-node-pnpm-dune/VERSION
+          - image_name: backend-builder-base
+            context: images/backend-builder-base
+            file: images/backend-builder-base/Dockerfile
+            version_file: images/backend-builder-base/VERSION
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Read image version
+        id: vars
+        run: |
+          set -eu
+          VERSION=$(tr -d ' \n\r\t' < "${{ matrix.version_file }}")
+          if [ -z "$VERSION" ]; then
+            echo "Version is empty in ${{ matrix.version_file }}"
+            exit 1
+          fi
+          MAJOR="${VERSION%%.*}"
+          if [ -z "$MAJOR" ]; then
+            echo "Could not derive major version from $VERSION"
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "major=$MAJOR" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate image metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/makerprism/${{ matrix.image_name }}
+          tags: |
+            type=raw,value=${{ steps.vars.outputs.version }}
+            type=raw,value=${{ steps.vars.outputs.major }}
+            type=sha,prefix=sha-
+
+      - name: Build and publish image
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.file }}
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=${{ matrix.image_name }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image_name }}
