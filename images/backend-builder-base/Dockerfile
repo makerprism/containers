@@ -3,7 +3,7 @@ FROM alpine:3.20
 ARG DUNE_VERSION=3.21.0
 ARG POSTGRES_VERSION=16.3
 
-RUN apk -U upgrade && apk add --no-cache \
+RUN apk add --no-cache \
     build-base \
     gmp-dev \
     libev-dev \

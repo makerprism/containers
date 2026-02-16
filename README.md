@@ -13,11 +13,13 @@ This repository publishes versioned images to GitHub Container Registry (GHCR) f
 Purpose: generic CI image for frontend + mixed Node/OCaml workflows.
 
 Includes:
-- Ubuntu 24.04
-- Node.js 20
+- Alpine Linux 3.22
+- Node.js 20.20.0
 - pnpm 10
 - dune 3.21
-- common build tools (`git`, `curl`, `build-essential`, `python3`, etc.)
+- common CI tools (`git`, `curl`, `jq`, `unzip`, etc.)
+
+Compatibility note: this image is Alpine-based (`musl`), not Ubuntu/Debian (`glibc`).
 
 Version source: `images/ci-node-pnpm-dune/VERSION`
 
