@@ -1,9 +1,9 @@
-# MakerPrism Containers
+# Makerprism Containers
 
-Reusable container images for MakerPrism engineering workflows.
+Reusable container images for Makerprism engineering workflows.
 
 This repository publishes versioned images to GitHub Container Registry (GHCR) for:
-- GitHub Actions CI jobs across MakerPrism repositories
+- GitHub Actions CI jobs across Makerprism repositories
 - Backend Docker builds that need a stable toolchain base
 
 ## Published Images
