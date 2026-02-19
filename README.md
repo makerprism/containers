@@ -45,6 +45,14 @@ Each image is published with:
 
 For production-grade consumers, pinning by digest is recommended.
 
+## Versioning
+
+This project follows [Semantic Versioning 2.0.0](https://semver.org/):
+
+- **MAJOR**: Incompatible changes that break existing consumers
+- **MINOR**: Backwards-compatible additions or new features
+- **PATCH**: Backwards-compatible bug fixes
+
 ## Publishing
 
 Workflow: `.github/workflows/build-images.yml`
