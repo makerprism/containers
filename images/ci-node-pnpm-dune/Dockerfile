@@ -13,6 +13,7 @@ RUN apk add --no-cache \
         git \
         jq \
         pkgconf \
+        postgresql16-client \
         unzip \
         xz \
     && corepack enable \
