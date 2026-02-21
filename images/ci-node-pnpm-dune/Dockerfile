@@ -14,8 +14,10 @@ RUN apk add --no-cache \
         jq \
         pkgconf \
         postgresql16-client \
+        tar \
         unzip \
         xz \
+        zstd \
     && corepack enable \
     && corepack prepare "pnpm@${PNPM_VERSION}" --activate \
     && curl -fsSL https://github.com/ocaml-dune/dune-bin-install/releases/download/v3/install.sh \
