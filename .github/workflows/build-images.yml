@@ -31,6 +31,10 @@ jobs:
             context: images/backend-builder-base
             file: images/backend-builder-base/Dockerfile
             version_file: images/backend-builder-base/VERSION
+          - image_name: coding-agent-base
+            context: images/coding-agent-base
+            file: images/coding-agent-base/Dockerfile
+            version_file: images/coding-agent-base/VERSION
 
     permissions:
       contents: read
