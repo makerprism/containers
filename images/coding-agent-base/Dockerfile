@@ -14,7 +14,7 @@ ARG NODE_VERSION=20.20.0
 ARG ALPINE_VERSION=3.22
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
 
-# Install core tools
+# Install core tools + OCaml build dependencies
 RUN apk add --no-cache \
         bash \
         build-base \
@@ -28,6 +28,12 @@ RUN apk add --no-cache \
         unzip \
         xz \
         zstd \
+        libpq-dev \
+        libev-dev \
+        postgresql-dev \
+        gmp-dev \
+        openssl-dev \
+        argon2-dev \
     && rm -rf /var/cache/apk/*
 
 # Install GitHub CLI
