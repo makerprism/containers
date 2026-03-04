@@ -13,15 +13,9 @@ Provide a consistent, isolated environment for coding agents that can work on re
 - Git
 - GitHub CLI (`gh`)
 - Build toolchain (`build-base`)
+- OCaml build dependencies (`libpq-dev`, `libev-dev`, `gmp-dev`, `openssl-dev`, `argon2-dev`)
 - SSH client (for git over SSH)
 - Common utilities (`curl`, `jq`, `tar`, etc.)
-
-## Security Features
-
-- Non-root user (`agent`) by default
-- No host filesystem access (use volume mounts)
-- Minimal attack surface (Alpine-based)
-- No privileged operations
 
 ## Usage
 
@@ -31,7 +25,7 @@ Provide a consistent, isolated environment for coding agents that can work on re
 docker run -it --rm \
   -v /path/to/repo:/workspace \
   -e ANTHROPIC_API_KEY=your-key \
-  ghcr.io/makerprism/coding-agent-base:1.0.0 \
+  ghcr.io/makerprism/coding-agent-base:1 \
   /bin/bash
 ```
 
@@ -41,7 +35,7 @@ docker run -it --rm \
 docker run -it --rm \
   -v /path/to/repo:/workspace \
   -e ANTHROPIC_API_KEY=your-key \
-  ghcr.io/makerprism/coding-agent-base:1.0.0 \
+  ghcr.io/makerprism/coding-agent-base:1 \
   npx opencode-ai
 ```
 
@@ -51,7 +45,7 @@ docker run -it --rm \
 docker run -it --rm \
   -v /path/to/repo:/workspace \
   -e ANTHROPIC_API_KEY=your-key \
-  ghcr.io/makerprism/coding-agent-base:1.0.0 \
+  ghcr.io/makerprism/coding-agent-base:1 \
   npx @zed-industries/claude-agent-acp
 ```
 
@@ -60,12 +54,10 @@ docker run -it --rm \
 For project-specific needs, extend this image:
 
 ```dockerfile
-FROM ghcr.io/makerprism/coding-agent-base:1.0.0
+FROM ghcr.io/makerprism/coding-agent-base:1
 
-# Add OCaml toolchain
-USER root
-RUN apk add --no-cache ocaml opam
-USER agent
+# Add custom toolchain
+RUN apk add --no-cache your-deps
 
 # Install additional npm tools
 RUN npm install -g some-tool
@@ -74,3 +66,5 @@ RUN npm install -g some-tool
 ## Versioning
 
 See [VERSION](./VERSION) file. Follows semantic versioning.
+
+Use the major tag (`:1`) to automatically get bug fixes and dependency updates.
