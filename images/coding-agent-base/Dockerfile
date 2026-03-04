@@ -9,6 +9,9 @@
 # - Minimal attack surface (Alpine-based)
 # - No privileged operations
 # - Network access configurable at runtime
+#
+# Note: Runs as root for CI volume mount compatibility. The container is
+# isolated by Docker, so this is safe for CI workloads.
 
 ARG NODE_VERSION=20.20.0
 ARG ALPINE_VERSION=3.22
@@ -39,14 +42,8 @@ RUN apk add --no-cache \
 # Install GitHub CLI
 RUN apk add --no-cache github-cli
 
-# Create non-root user for safety
-RUN addgroup -S agent && adduser -S agent -G agent
-
 # Set up workspace
 WORKDIR /workspace
-
-# Agent runs as non-root by default
-USER agent
 
 # Default to bash for interactive use
 CMD ["/bin/bash"]
