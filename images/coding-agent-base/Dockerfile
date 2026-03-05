@@ -15,6 +15,7 @@
 
 ARG NODE_VERSION=20.20.0
 ARG ALPINE_VERSION=3.22
+ARG DUNE_VERSION=3.21.0
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
 
 # Install core tools + OCaml build dependencies
@@ -37,22 +38,14 @@ RUN apk add --no-cache \
         gmp-dev \
         openssl-dev \
         argon2-dev \
-        opam \
     && rm -rf /var/cache/apk/*
 
 # Install GitHub CLI
 RUN apk add --no-cache github-cli
 
-# Initialize OCaml via opam
-ENV OPAMROOT=/root/.opam
-RUN opam init --disable-sandboxing --bare -y && \
-    opam switch create 5.2.0 && \
-    eval $(opam env) && \
-    opam install -y dune merlin ocamlformat && \
-    opam clean -a -c -s --logs
-
-# Add opam env to shell
-RUN echo 'eval $(opam env)' >> /root/.bashrc
+# Install dune (OCaml build system with package management)
+RUN curl -fsSL https://github.com/ocaml-dune/dune-bin-install/releases/download/v3/install.sh \
+      | sh -s -- "${DUNE_VERSION}" --install-root /usr/local --no-update-shell-config
 
 # Set up workspace
 WORKDIR /workspace
