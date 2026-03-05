@@ -20,8 +20,10 @@
 
 ARG NODE_VERSION=20.20.0
 ARG ALPINE_VERSION=3.22
-ARG DUNE_VERSION=3.21.0
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
+
+# Redeclare ARGs after FROM to use in build stage
+ARG DUNE_VERSION=3.21.0
 
 # Install core tools + OCaml build dependencies (aligned with backend-builder-base)
 RUN apk add --no-cache \
