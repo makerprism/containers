@@ -23,6 +23,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - image_name: dev-base
+            context: images/dev-base
+            file: images/dev-base/Dockerfile
+            version_file: images/dev-base/VERSION
           - image_name: ci-node-pnpm-dune
             context: images/ci-node-pnpm-dune
             file: images/ci-node-pnpm-dune/Dockerfile
@@ -31,10 +35,6 @@ jobs:
             context: images/backend-builder-base
             file: images/backend-builder-base/Dockerfile
             version_file: images/backend-builder-base/VERSION
-          - image_name: coding-agent-base
-            context: images/coding-agent-base
-            file: images/coding-agent-base/Dockerfile
-            version_file: images/coding-agent-base/VERSION
 
     permissions:
       contents: read
