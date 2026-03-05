@@ -8,4 +8,8 @@ When changing Dockerfiles, ALWAYS update the `VERSION` file:
 
 Remember: version must be incremented before pushing.
 
-Keep docs concise and to the point.
+## Communication Style
+
+Be concise. Get to the point. No fluff, no redundant explanations. Say what needs saying and stop.
+
+**Always link PRs.** When mentioning PRs, include the full GitHub URL. Never just say "PR #123" — always say "PR #123: https://github.com/owner/repo/pull/123"
