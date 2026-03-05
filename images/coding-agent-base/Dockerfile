@@ -37,10 +37,22 @@ RUN apk add --no-cache \
         gmp-dev \
         openssl-dev \
         argon2-dev \
+        opam \
     && rm -rf /var/cache/apk/*
 
 # Install GitHub CLI
 RUN apk add --no-cache github-cli
+
+# Initialize OCaml via opam
+ENV OPAMROOT=/root/.opam
+RUN opam init --disable-sandboxing --bare -y && \
+    opam switch create 5.2.0 && \
+    eval $(opam env) && \
+    opam install -y dune merlin ocamlformat && \
+    opam clean -a -c -s --logs
+
+# Add opam env to shell
+RUN echo 'eval $(opam env)' >> /root/.bashrc
 
 # Set up workspace
 WORKDIR /workspace
