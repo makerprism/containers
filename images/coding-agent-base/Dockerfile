@@ -4,6 +4,11 @@
 # Purpose: Provide a consistent, isolated environment for coding agents
 # that can be used to work on repositories safely.
 #
+# Features:
+# - Node.js 20 + pnpm for TypeScript/JavaScript
+# - Dune 3.21 with package management for OCaml
+# - PostgreSQL client libraries for backend work
+#
 # Security features:
 # - No host filesystem access (use volume mounts)
 # - Minimal attack surface (Alpine-based)
@@ -18,26 +23,36 @@ ARG ALPINE_VERSION=3.22
 ARG DUNE_VERSION=3.21.0
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
 
-# Install core tools + OCaml build dependencies
+# Install core tools + OCaml build dependencies (aligned with backend-builder-base)
 RUN apk add --no-cache \
         bash \
         build-base \
         ca-certificates \
         curl \
         git \
+        gmp-dev \
         jq \
-        openssh-client \
+        libev-dev \
+        libffi-dev \
+        libpq-dev \
+        m4 \
+        openssl-dev \
+        openssl-libs-static \
         pkgconf \
+        postgresql-dev \
+        postgresql16-client \
+        perl \
+        readline-dev \
+        readline-static \
         tar \
         unzip \
         xz \
         zstd \
-        libpq-dev \
-        libev-dev \
-        postgresql-dev \
-        gmp-dev \
-        openssl-dev \
+        zlib-dev \
+        zlib-static \
+        musl-dev \
         argon2-dev \
+        openssh-client \
     && rm -rf /var/cache/apk/*
 
 # Install GitHub CLI
@@ -45,7 +60,7 @@ RUN apk add --no-cache github-cli
 
 # Install dune (OCaml build system with package management)
 RUN curl -fsSL https://github.com/ocaml-dune/dune-bin-install/releases/download/v3/install.sh \
-      | sh -s -- "${DUNE_VERSION}" --install-root /usr/local --no-update-shell-config
+      | sh -s -- "${DUNE_VERSION}" --install-root /usr --no-update-shell-config
 
 # Set up workspace
 WORKDIR /workspace
