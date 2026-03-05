@@ -4,7 +4,6 @@
 
 Be concise. Get to the point. No fluff, no redundant explanations. Say what needs saying and stop.
 
-**Always link PRs.** When mentioning PRs, include the full GitHub URL. Never just say "PR #123" — always say "PR #123: https://github.com/owner/repo/pull/123"
 
 # Version Increment Checklist
 
