@@ -8,9 +8,9 @@ This repository publishes versioned images to GitHub Container Registry (GHCR) f
 
 ## Published Images
 
-### `ghcr.io/makerprism/ci-node-pnpm-dune`
+### `ghcr.io/makerprism/dev-base` (Recommended)
 
-Purpose: generic CI image for frontend + mixed Node/OCaml workflows.
+Purpose: unified image for CI pipelines, coding agents, and local development.
 
 Includes:
 - Alpine Linux 3.22
@@ -19,10 +19,10 @@ Includes:
 - dune 3.21
 - build toolchain (`make`, `gcc`, musl-dev via `build-base`)
 - common CI tools (`git`, `curl`, `jq`, `unzip`, etc.)
+- Claude Code CLI (for coding agents)
+- GitHub CLI (`gh`)
 
-Compatibility note: this image is Alpine-based (`musl`), not Ubuntu/Debian (`glibc`).
-
-Version source: `images/ci-node-pnpm-dune/VERSION`
+Version source: `images/dev-base/VERSION`
 
 ### `ghcr.io/makerprism/backend-builder-base`
 
@@ -35,6 +35,12 @@ Includes:
 - PostgreSQL static client libraries built from source (v16.3)
 
 Version source: `images/backend-builder-base/VERSION`
+
+### ~~`ghcr.io/makerprism/ci-node-pnpm-dune`~~ (Deprecated)
+
+> ⚠️ **Deprecated** - Use [`dev-base`](#ghcriomakerprismdev-base-recommended) instead.
+
+This image is no longer built. Existing tags remain available but will not receive updates.
 
 ## Tagging Policy
 
@@ -88,7 +94,7 @@ jobs:
   build_frontend:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/makerprism/ci-node-pnpm-dune:1.0.1
+      image: ghcr.io/makerprism/dev-base:1
     steps:
       - uses: actions/checkout@v4
       - run: pnpm --version && dune --version
@@ -97,7 +103,7 @@ jobs:
 ### Dockerfile backend builder base
 
 ```dockerfile
-FROM ghcr.io/makerprism/backend-builder-base:1.0.0 AS builder
+FROM ghcr.io/makerprism/backend-builder-base:1 AS builder
 WORKDIR /app
 COPY . .
 RUN dune build --profile=release bin/main.exe
