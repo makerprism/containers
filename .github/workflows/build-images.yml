@@ -27,10 +27,6 @@ jobs:
             context: images/dev-base
             file: images/dev-base/Dockerfile
             version_file: images/dev-base/VERSION
-          - image_name: ci-node-pnpm-dune
-            context: images/ci-node-pnpm-dune
-            file: images/ci-node-pnpm-dune/Dockerfile
-            version_file: images/ci-node-pnpm-dune/VERSION
           - image_name: backend-builder-base
             context: images/backend-builder-base
             file: images/backend-builder-base/Dockerfile
