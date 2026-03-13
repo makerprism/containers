@@ -15,7 +15,7 @@ on:
 jobs:
   update-visibility:
     name: Set GHCR package visibility
-    runs-on: self-hosted
+    runs-on: ubicloud-standard-2
     permissions:
       contents: read
       packages: write
