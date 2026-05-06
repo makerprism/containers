@@ -16,7 +16,7 @@ Includes:
 - Alpine Linux 3.22
 - Node.js 20.20.0
 - pnpm 10
-- dune 3.21
+- dune 3.23.0 (built from the official release tarball during image build)
 - build toolchain (`make`, `gcc`, musl-dev via `build-base`)
 - common CI tools (`git`, `curl`, `jq`, `unzip`, etc.)
 - Claude Code CLI (for coding agents)
@@ -31,7 +31,7 @@ Purpose: generic backend Docker builder base for static OCaml/PostgreSQL-linked 
 Includes:
 - Alpine 3.20
 - OCaml build deps + static libs
-- dune 3.21
+- dune 3.23.0 (built from the official release tarball during image build)
 - PostgreSQL static client libraries built from source (v16.3)
 
 Version source: `images/backend-builder-base/VERSION`
@@ -94,7 +94,7 @@ jobs:
   build_frontend:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/makerprism/dev-base:1
+      image: ghcr.io/makerprism/dev-base:3
     steps:
       - uses: actions/checkout@v4
       - run: pnpm --version && dune --version
@@ -103,7 +103,7 @@ jobs:
 ### Dockerfile backend builder base
 
 ```dockerfile
-FROM ghcr.io/makerprism/backend-builder-base:1 AS builder
+FROM ghcr.io/makerprism/backend-builder-base:3 AS builder
 WORKDIR /app
 COPY . .
 RUN dune build --profile=release bin/main.exe
