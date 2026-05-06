@@ -1,10 +1,11 @@
 FROM alpine:3.20
 
-ARG DUNE_VERSION=3.21.0
+ARG DUNE_VERSION=3.23.0
 ARG POSTGRES_VERSION=16.3
 
 RUN apk add --no-cache \
     build-base \
+    ocaml \
     gmp-dev \
     libev-dev \
     libffi-dev \
@@ -22,8 +23,13 @@ RUN apk add --no-cache \
     readline-dev \
     readline-static
 
-RUN curl -fsSL https://github.com/ocaml-dune/dune-bin-install/releases/download/v3/install.sh \
-    | sh -s -- "${DUNE_VERSION}" --install-root /usr --no-update-shell-config
+# dune-bin-install is archived; build dune from the official release tarball.
+RUN curl -fsSL "https://github.com/ocaml/dune/releases/download/${DUNE_VERSION}/dune-${DUNE_VERSION}.tbz" | tar xjf - && \
+    cd "dune-${DUNE_VERSION}" && \
+    ./configure --prefix=/usr && \
+    make release && \
+    make install && \
+    cd .. && rm -rf "dune-${DUNE_VERSION}"
 
 RUN curl -fsSL "https://ftp.postgresql.org/pub/source/v${POSTGRES_VERSION}/postgresql-${POSTGRES_VERSION}.tar.gz" | tar xzf - && \
     cd "postgresql-${POSTGRES_VERSION}" && \

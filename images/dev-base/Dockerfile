@@ -3,7 +3,7 @@
 #
 # Features:
 # - Node.js 20 + pnpm for TypeScript/JavaScript
-# - Dune 3.21 with package management for OCaml
+# - Dune 3.23.0 with package management for OCaml
 # - PostgreSQL client libraries for backend work
 # - Atlas for database migrations
 # - GitHub CLI for PRs and issues
@@ -24,7 +24,7 @@ FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
 
 # Redeclare ARGs after FROM to use in build stage
 ARG PNPM_VERSION=10.29.3
-ARG DUNE_VERSION=3.21.0
+ARG DUNE_VERSION=3.23.0
 ARG ATLAS_VERSION=latest
 
 # Install all dependencies: build tools, DB clients, dev utilities
@@ -40,6 +40,7 @@ RUN apk add --no-cache \
         libffi-dev \
         libpq-dev \
         m4 \
+        ocaml \
         openssl-dev \
         openssl-libs-static \
         pkgconf \
@@ -69,9 +70,14 @@ RUN curl -sSfL "https://release.ariga.io/atlas/atlas-linux-amd64-${ATLAS_VERSION
 RUN corepack enable \
     && corepack prepare "pnpm@${PNPM_VERSION}" --activate
 
-# Install dune (OCaml build system with package management)
-RUN curl -fsSL https://github.com/ocaml-dune/dune-bin-install/releases/download/v3/install.sh \
-      | sh -s -- "${DUNE_VERSION}" --install-root /usr --no-update-shell-config
+# Install dune from the official release tarball; dune-bin-install is archived.
+RUN curl -fsSL "https://github.com/ocaml/dune/releases/download/${DUNE_VERSION}/dune-${DUNE_VERSION}.tbz" | tar xjf - \
+    && cd "dune-${DUNE_VERSION}" \
+    && ./configure --prefix=/usr \
+    && make release \
+    && make install \
+    && cd .. \
+    && rm -rf "dune-${DUNE_VERSION}"
 
 # Set up workspace
 WORKDIR /workspace
