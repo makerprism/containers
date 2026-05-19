@@ -72,7 +72,9 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/makerprism/${{ matrix.image_name }}
+          images: |
+            ghcr.io/${{ github.repository }}/${{ matrix.image_name }}
+            ghcr.io/makerprism/${{ matrix.image_name }}
           tags: |
             type=raw,value=${{ steps.vars.outputs.version }}
             type=raw,value=${{ steps.vars.outputs.major }}

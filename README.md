@@ -8,7 +8,7 @@ This repository publishes versioned images to GitHub Container Registry (GHCR) f
 
 ## Published Images
 
-### `ghcr.io/makerprism/dev-base` (Recommended)
+### `ghcr.io/makerprism/containers/dev-base` (Recommended)
 
 Purpose: unified image for CI pipelines, coding agents, and local development.
 
@@ -24,7 +24,7 @@ Includes:
 
 Version source: `images/dev-base/VERSION`
 
-### `ghcr.io/makerprism/backend-builder-base`
+### `ghcr.io/makerprism/containers/backend-builder-base`
 
 Purpose: generic backend Docker builder base for static OCaml/PostgreSQL-linked binaries.
 
@@ -68,13 +68,15 @@ Triggers:
 - pull requests for validation builds (no publish)
 - manual run (`workflow_dispatch`)
 
-By default, images are published to GHCR with repository-scoped access.
+Images are published to repository-scoped GHCR paths under `ghcr.io/makerprism/containers/...`.
+The workflow also publishes the previous org-scoped paths under `ghcr.io/makerprism/...`
+for existing consumers, but new CI consumers should use the repository-scoped paths.
 
 ## Visibility
 
-Current plan: org-private packages while validating stability.
-
-When ready, package visibility can be switched to public in GHCR package settings without changing image names.
+Repository-scoped image paths are the public distribution path. They are created by the
+public `makerprism/containers` repository workflow, which keeps package visibility tied
+to this repository instead of depending on a separate GHCR visibility toggle.
 
 ## Why GHCR first (vs Docker Hub)
 
@@ -94,7 +96,7 @@ jobs:
   build_frontend:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/makerprism/dev-base:3
+      image: ghcr.io/makerprism/containers/dev-base:3
     steps:
       - uses: actions/checkout@v4
       - run: pnpm --version && dune --version
@@ -103,7 +105,7 @@ jobs:
 ### Dockerfile backend builder base
 
 ```dockerfile
-FROM ghcr.io/makerprism/backend-builder-base:3 AS builder
+FROM ghcr.io/makerprism/containers/backend-builder-base:3 AS builder
 WORKDIR /app
 COPY . .
 RUN dune build --profile=release bin/main.exe
