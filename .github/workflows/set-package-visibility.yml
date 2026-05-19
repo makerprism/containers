@@ -21,16 +21,30 @@ jobs:
       packages: write
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Update package visibility
         uses: actions/github-script@v7
         env:
           TARGET_VISIBILITY: ${{ inputs.visibility }}
         with:
           script: |
+            const fs = require('fs');
+            const path = require('path');
+
             const visibility = process.env.TARGET_VISIBILITY;
             const org = context.repo.owner;
             const packageType = 'container';
-            const packageNames = ['ci-node-pnpm-dune', 'backend-builder-base'];
+            const imagesDir = path.join(process.env.GITHUB_WORKSPACE, 'images');
+            const packageNames = fs
+              .readdirSync(imagesDir, { withFileTypes: true })
+              .filter((entry) => entry.isDirectory())
+              .map((entry) => entry.name)
+              .filter((packageName) =>
+                fs.existsSync(path.join(imagesDir, packageName, 'VERSION')),
+              )
+              .sort();
 
             for (const packageName of packageNames) {
               core.info(`Setting ${packageName} visibility to ${visibility}`);
